@@ -1,10 +1,7 @@
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
 
-exports.sequelize = new Sequelize(process.env.MYSQL_URI, {
-    logging: false,  
-    // sync: { force: true },  // non need for sync anymore
-});
+exports.sequelize = new Sequelize(process.env.MYSQL_URI);
 
 // try {
 //     await sequelize.authenticate();

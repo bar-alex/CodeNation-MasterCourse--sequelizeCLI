@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/connection");
 
+
 const Movie = sequelize.define("movie", 
 {
     title: {
@@ -29,6 +30,7 @@ const Movie = sequelize.define("movie",
     ]
 }
 );
+
 
 const TvSeries = sequelize.define("tvseries", 
 {
@@ -65,7 +67,36 @@ const TvSeries = sequelize.define("tvseries",
 }
 )
 
+
+const Director = sequelize.define("director", {
+    fullName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+});
+
+
+Director.hasMany( Movie, { as: 'movie', foreignKey: "directorID" });
+//Movie.belongsTo(Director);
+
+Director.hasMany( TvSeries, { as: 'tvshow', foreignKey: "directorID" } )
+//TvSeries.belongsTo(Director);
+
+
+//console.log('-> table.js :: this is run');
+
 module.exports = {
     Movie,
     TvSeries,
+    Director,
 } ;
+
+
+
+
+// Country.hasOne(Capital);
+// Capital.belongsTo(Country);
+
+// Country.hasMany(City);
+// City.belongsTo(Country);
