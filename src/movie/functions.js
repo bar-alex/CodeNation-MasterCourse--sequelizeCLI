@@ -47,10 +47,14 @@ exports.listMovies = async (filterObj, platform) => {
         //const whereCond = { Where: {title: ""} } 
         const movieList = !!platform && platform.toLowerCase() === 'tv'
             ? await TvSeries.findAll( {where: filterObj, include: [{model: Director}] } )
-            : await Movie.findAll( {where: filterObj, include: [{model: Director}] } )
+            : await Movie.findAll( {
+                    where: filterObj, 
+                    include: Director,
+                    attributes: ['id', 'title', 'actor', 'director.fullName'], 
+                } )
         // display just the simple objects
         // console.log( movieList );
-        console.table( movieList.map( it => it.dataValues ) )
+        console.table( movieList.map( it => { return {...it.dataValues, 'director': it.dataValues.director ? it.dataValues.director.fullName : 'N/A'} } ) )
         // console.log(movieList.map( it => it.dataValues ));
 
     } catch (error) {
