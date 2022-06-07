@@ -69,7 +69,13 @@ const yargsObj = yargs(hideBin(process.argv))
     .describe('platform','specify the targeted platform ("movie" or "tv"), defaults to "movie"')
     .choices('platform', ['movie','tv'])        // if specified can only choose between movie and tv
     .alias('title','movie')                     // --title or --movie
-    .help('help')
+    .conflicts('add', 'list')
+    .conflicts('add', 'update')
+    .conflicts('add', 'delete')
+    .conflicts('list', 'update')
+    .conflicts('list', 'delete')
+    .conflicts('update', 'delete')
+    .help('help')    
     .check( (argv)=>{
         // either of the main ones must be specified
         if(!( argv['add'] || argv['list'] || argv['update'] || argv['delete'] ))

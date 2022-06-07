@@ -1,7 +1,8 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/connection");
 
-const Movie = sequelize.define("movie", {
+const Movie = sequelize.define("movie", 
+{
     title: {
         type: DataTypes.STRING, 
         allowNull: false,
@@ -11,9 +12,26 @@ const Movie = sequelize.define("movie", {
         type: DataTypes.STRING,
         defaultValue: "Not specified",
     },
-});
+},
+{
+    indexes: [
+        {
+            fields: ['title'],
+        },
+        {
+            fields: ['actor'],
+        },
+        {
+            type: "FULLTEXT",
+            fields: ['title', 'actor'],
+        },
 
-const TvSeries = sequelize.define("tvseries", {
+    ]
+}
+);
+
+const TvSeries = sequelize.define("tvseries", 
+{
     title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -29,7 +47,23 @@ const TvSeries = sequelize.define("tvseries", {
         allowNull: false,
         defaultValue: 1,
     }
-})
+},
+{
+    indexes: [
+        {
+            fields: ['title'],
+        },
+        {
+            fields: ['actor'],
+        },
+        {
+            type: "FULLTEXT",
+            fields: ['title', 'actor'],
+        },
+
+    ]
+}
+)
 
 module.exports = {
     Movie,
