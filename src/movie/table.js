@@ -77,11 +77,11 @@ const Director = sequelize.define("director", {
 });
 
 
-Director.hasMany( Movie, { as: 'movie', foreignKey: "directorID" });
-//Movie.belongsTo(Director);
+// Director.hasMany( Movie, { as: 'movie', foreignKey: "directorID" });
+Movie.belongsTo(Director, { foreignKey: "directorID" });
 
-Director.hasMany( TvSeries, { as: 'tvshow', foreignKey: "directorID" } )
-//TvSeries.belongsTo(Director);
+// Director.hasMany( TvSeries, { as: 'tvshow', foreignKey: "directorID" } )
+TvSeries.belongsTo(Director, { foreignKey: "directorID" });
 
 
 //console.log('-> table.js :: this is run');

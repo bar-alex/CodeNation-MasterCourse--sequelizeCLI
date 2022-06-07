@@ -1,5 +1,6 @@
 const { sequelize } = require("../db/connection");
 const { Movie, TvSeries, Director } = require("./table");
+const { Op } = require("sequelize");
 
 
 exports.addMovie = async (movieObj, platform) => {
@@ -33,12 +34,22 @@ exports.listMovies = async (filterObj, platform) => {
     try {
         console.log("-> listMovies param: ",filterObj, platform);
         // console.log( 'sequelize.options.logging:', sequelize.options.logging );
+        // attempt to create the object for the where clause that includes the 'like' for '%'
+        if( typeof filterObj === 'object' )
+            Object.keys(filterObj).map( (key,idx) => {
+                if (!filterObj[key])
+                    delete filterObj[key]
+                else if( typeof filterObj[key] === 'string' && filterObj[key].indexOf('%')>-1 )
+                    filterObj[key] = { [Op.like]: filterObj[key] }
+            } )
+        console.log('-> filterObj after:',filterObj);
 
         //const whereCond = { Where: {title: ""} } 
         const movieList = !!platform && platform.toLowerCase() === 'tv'
-            ? await TvSeries.findAll( {where: filterObj} )
-            : await Movie.findAll( {where: filterObj} )
+            ? await TvSeries.findAll( {where: filterObj, include: [{model: Director}] } )
+            : await Movie.findAll( {where: filterObj, include: [{model: Director}] } )
         // display just the simple objects
+        // console.log( movieList );
         console.table( movieList.map( it => it.dataValues ) )
         // console.log(movieList.map( it => it.dataValues ));
 

@@ -93,6 +93,7 @@ const yargsObj = yargs(hideBin(process.argv))
     .choices('platform', ['movie','tv'])        // if specified can only choose between movie and tv
 
     .default('platform','movie')
+    .boolean('logging')
     .default('logging',false)
 
     .conflicts('add', 'list')
