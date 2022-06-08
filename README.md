@@ -4,6 +4,10 @@ Sample CLI project to manage a simple movie database using the Sequelize ORM wit
 
 Uses Yargs, Sequelize, MySQL2 node packages.
 
+To get this working, you will need a ```.env``` file in the root of the project that will contain a connection string for a MySQL database, similar to this:
+```
+MYSQL_URI = mysql://*secret*:*secret*@*secret*-mysql.services.clever-cloud.com:3306/*database-name*
+```
 
 ---
 These are the available options: 
