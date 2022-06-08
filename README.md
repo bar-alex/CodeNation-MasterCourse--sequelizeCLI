@@ -11,17 +11,17 @@ These are the available options:
 ```
 $ node src/app.js --help
 Options:
-  --version   Show version number                                                                 [boolean]
+  --version   Show version number                                                               [boolean]
   --add       adds a new movie (--title, --actor and --director)
   --list      lists the movie(s) specified in the filter (--title / --actor / --director / none)
   --update    updates the movie (--title as filter and --newTitle and/or --newActor and/or --newDirector)
   --delete    deletes the movie(s) specified in the filter (--title or --actor)
   --platform  specify the targeted platform ("movie" or "tv")
-                                                                [choices: "movie", "tv"] [default: "movie"]
+                                                              [choices: "movie", "tv"] [default: "movie"]
   --setup     will set up the tables and the relations between them - needed only once
   --logging   whether to show or not the sql commands executed behind the scene
-                                                                                           [default: false]
-  --help      Show help                                                                           [boolean]
+                                                                                         [default: false]
+  --help      Show help                                                                         [boolean]
 ```
 ---
 ```
