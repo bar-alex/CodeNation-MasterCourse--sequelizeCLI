@@ -15,7 +15,7 @@ Options:
   --add       adds a new movie (--title, --actor and --director)
   --list      lists the movie(s) specified in the filter (--title / --actor / --director / none)
   --update    updates the movie (--title as filter and --newTitle and/or --newActor and/or --newDirector)
-  --delete    deletes the movie(s) specified in the filter (--title or --actor or --director)
+  --delete    deletes the movie(s) specified in the filter (--title or --actor)
   --platform  specify the targeted platform ("movie" or "tv")
                                                                 [choices: "movie", "tv"] [default: "movie"]
   --setup     will set up the tables and the relations between them - needed only once

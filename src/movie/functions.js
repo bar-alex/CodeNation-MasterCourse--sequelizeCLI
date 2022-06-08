@@ -29,33 +29,69 @@ exports.addMovie = async (movieObj, platform) => {
 }
 
 
-// return a list of movies that matches the filter provided
-exports.listMovies = async (filterObj, platform) => {
-    try {
-        console.log("-> listMovies param: ",filterObj, platform);
-        // console.log( 'sequelize.options.logging:', sequelize.options.logging );
+// parses the filter object and returns an array of two objects, the includeObj and the changed filterObj
+// used in listMovies() and deleteMovies()
+const _formatIncludeAndFilterObjects = (filterObj) => {
+    
+    // for director, i need a new object
+    const includeObj = {model: Director}
+
+    // only if i have a filter
+    if( typeof filterObj === 'object' ) {
+
+        // if director is specified i'll add an where clause to include
+        if( !!filterObj['director']){
+            includeObj.where = filterObj['director'].indexOf('%')>-1 
+                ? {fullName: { [Op.like]: filterObj['director'] } } 
+                : {fullName: filterObj['director']}
+            // remove this because is not needed
+            delete filterObj.director
+        }
+
         // attempt to create the object for the where clause that includes the 'like' for '%'
-        if( typeof filterObj === 'object' )
-            Object.keys(filterObj).map( (key,idx) => {
-                if (!filterObj[key])
-                    delete filterObj[key]
-                else if( typeof filterObj[key] === 'string' && filterObj[key].indexOf('%')>-1 )
-                    filterObj[key] = { [Op.like]: filterObj[key] }
-            } )
-        console.log('-> filterObj after:',filterObj);
+        Object.keys(filterObj).map( (key,idx) => {
+            if (!filterObj[key])
+                delete filterObj[key]
+            else if( typeof filterObj[key] === 'string' && filterObj[key].indexOf('%')>-1 )
+                filterObj[key] = { [Op.like]: filterObj[key] }
+        } )
+    }
+
+    // return an array of the two objects for destructuring
+    return [ filterObj, includeObj ]
+}
+
+
+// return a list of movies that matches the filter provided
+exports.listMovies = async (filteringObj, platform) => {
+    try {
+        // console.log("-> listMovies param: ",filterObj, platform);
+        
+        const [ filterObj, includeObj ] = _formatIncludeAndFilterObjects(filteringObj);
+
+        // console.log('-> filterObj after:',filterObj);
+        // console.log('-> includeObj after:',includeObj);
 
         //const whereCond = { Where: {title: ""} } 
         const movieList = !!platform && platform.toLowerCase() === 'tv'
-            ? await TvSeries.findAll( {where: filterObj, include: [{model: Director}] } )
+            ? await TvSeries.findAll( {
+                    where: filterObj, 
+                    include: includeObj,
+                    attributes: ['id', 'title', 'actor', 'seasons', 'director.fullName'], 
+                } )
             : await Movie.findAll( {
                     where: filterObj, 
-                    include: Director,
+                    include: includeObj,
                     attributes: ['id', 'title', 'actor', 'director.fullName'], 
                 } )
-        // display just the simple objects
         // console.log( movieList );
-        console.table( movieList.map( it => { return {...it.dataValues, 'director': it.dataValues.director ? it.dataValues.director.fullName : 'N/A'} } ) )
-        // console.log(movieList.map( it => it.dataValues ));
+
+        // display just the simple objects
+        console.log('\n-> listMovies: These are the results of your query:');
+        console.table( movieList.map( it => { return {
+                ...it.dataValues, 
+                'director': it.dataValues.director ? it.dataValues.director.fullName : 'N/A'
+            }} ) )
 
     } catch (error) {
         console.log("\n-> listMovies thrown an error: \n",'filterObj: ',filterObj,'\n',error);
@@ -99,16 +135,30 @@ exports.updateMovie = async (filterObj, updateObj, platform) => {
 
 
 // will delete movies based on the filterObj (akin to listMovies)
-exports.deleteMovies = async (filterObj, platform) => {
+exports.deleteMovies = async (filteringObj, platform) => {
     try {
+
+        const [ filterObj, includeObj ] = _formatIncludeAndFilterObjects(filteringObj);
+
+        // console.log('-> filterObj after:',filterObj);
+        // console.log('-> includeObj after:',includeObj);
+
+        //const whereCond = { Where: {title: ""} } 
         const response = !!platform && platform.toLowerCase() === 'tv'
-            ? await TvSeries.destroy( {where: filterObj} ) 
-            : await Movie.destroy( {where: filterObj} )
+            ? await TvSeries.destroy( {
+                    where: filterObj, 
+                    include: includeObj,
+                } )
+            : await Movie.destroy( {
+                    where: filterObj, 
+                    include: includeObj,
+                } )
+
 
         if (response>0)
             console.log("-> deleteMovies: Successfully deleted", response);
         else 
-            console.log("-> deleteMovies: Nothing eas deleted for filterObj:",filterObj);
+            console.log("-> deleteMovies: Nothing was deleted for filterObj:",filterObj);
     } catch (error) {
         console.log("\n-> deleteMovies thrown an error: \n",'filterObj: ',filterObj,'\n',error);
     }

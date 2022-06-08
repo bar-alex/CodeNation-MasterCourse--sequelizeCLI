@@ -64,7 +64,14 @@ const app = async (yargsObj) => {
 
         } else if (yargsObj.delete) {
             // take filter k/v pair from yargsObj and send them to delete function, return success/failure
-            await deleteMovies( {title: yargsObj.title}, yargsObj.platform )
+            if (yargsObj.title || yargsObj.actor)
+                await deleteMovies( {
+                    title: yargsObj.title, 
+                    actor: yargsObj.actor,
+                    director: yargsObj.director,   // this doesn't work
+                }, yargsObj.platform )
+            else 
+                throw "\n-> Error: For delete operations you need to specify the --title and/or --actor";
 
         } else if (yargsObj.setup) {
             // just in case it runs only with setup, don't need to tdo anything
@@ -83,7 +90,7 @@ const yargsObj = yargs(hideBin(process.argv))
     .describe('add','adds a new movie (--title, --actor and --director)')
     .describe('list','lists the movie(s) specified in the filter (--title / --actor / --director / none)')
     .describe('update','updates the movie (--title as filter and --newTitle and/or --newActor and/or --newDirector )')
-    .describe('delete','deletes the movie(s) specified in the filter (--title or --actor or --director)')
+    .describe('delete','deletes the movie(s) specified in the filter (--title or --actor)')
     .describe('platform','specify the targeted platform ("movie" or "tv")')
     .describe('setup','will set up the tables and the relations between them - needed only once')
     .describe('logging','whether to show or not the sql commands executed behind the scene')
@@ -117,8 +124,8 @@ const yargsObj = yargs(hideBin(process.argv))
             throw new Error('For updating (--update) you have to specify the title (--title) as a filter and at least --newTitle or --newActor')
 
         // check that update-ing is done proper (--title can be missing if the text is assigned to --update, must have newTitle or newActor)
-        if( !!argv['delete'] && (!argv['title'] && typeof argv['delete'] !== 'string') )
-            throw new Error('For deleting (--delete) you have to specify the title (--title) as a filter')
+        // if( !!argv['delete'] && (!argv['title'] && typeof argv['delete'] !== 'string') )
+        //     throw new Error('For deleting (--delete) you have to specify the title (--title) as a filter')
 
         // if it got here there's not problems anywhere
         return true;
