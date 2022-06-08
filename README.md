@@ -37,5 +37,5 @@ node src/app.js --add --title "LOST" --seasons 7 --platform tv
 node src/app.js --platform tv --add "Black Widow" --actor "Scarlett Johansson" --seasons 3
 node src/app.js --platform tv --list
 node src/app.js --list --actor "%lett%" --platform tv
-node src/app.js --platform tv --update "Black Widow" --newDirector "Joe Black" --newTitle "The Widow in Black"
+node src/app.js --platform tv --update "Black Widow" --newDirector "Joe Black" --newTitle "The Widow"
 ```
