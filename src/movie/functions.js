@@ -30,10 +30,11 @@ exports.addMovie = async (movieObj, platform) => {
 
 
 // parses the filter object and returns an array of two objects, the includeObj and the changed filterObj
+// sets up includeObj to add the Director model to the query (join), changes filterObj to contain [Op.like] as neede by the query
 // used in listMovies() and deleteMovies()
 const _formatIncludeAndFilterObjects = (filterObj) => {
     
-    // for director, i need a new object
+    // for director table, i need a new object
     const includeObj = {model: Director}
 
     // only if i have a filter
@@ -88,6 +89,7 @@ exports.listMovies = async (filteringObj, platform) => {
 
         // display just the simple objects
         console.log('\n-> listMovies: These are the results of your query:');
+        // displays it nice in a table
         console.table( movieList.map( it => { return {
                 ...it.dataValues, 
                 'director': it.dataValues.director ? it.dataValues.director.fullName : 'N/A'
